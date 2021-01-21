@@ -1,0 +1,2 @@
+adaptive=com.github.spsl.minirpc.example.extension.impl.AdaptiveDemoService
+default=com.github.spsl.minirpc.example.extension.impl.DefaultDemoService
