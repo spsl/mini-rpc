@@ -27,7 +27,6 @@ public class ExtensionLoader<T> {
 
     private final AtomicReference<Object> cachedAdaptiveInstance = new AtomicReference<>();
 
-
     private ExtensionFactory extensionFactory;
 
     private Class<?> cachedAdaptiveExtensionClass;
@@ -160,7 +159,7 @@ public class ExtensionLoader<T> {
         setDefaultExtensionName();
         cachedClasses = new ConcurrentHashMap<>();
         for (ExtensionLoadingStrategy strategy : strategySet) {
-            loadDirectory(cachedClasses, strategy.getDirectory(), type.getName(), strategy.isExtensionLoaderClassLoaderFirst(), strategy.isOverridden(), strategy.excludePackages());
+            loadDirectory(cachedClasses, strategy.getDirectory(), type.getName());
         }
     }
 
@@ -183,36 +182,23 @@ public class ExtensionLoader<T> {
 
     private void loadDirectory(Map<String, Class<?>> extensionClasses,
                                String dir,
-                               String type,
-                               boolean extensionLoaderClassLoaderFirst,
-                               boolean overridden,
-                               String... excludedPackages) {
+                               String type) {
 
         String fileName = dir + type;
         try {
             Enumeration<URL> urls = null;
             ClassLoader classLoader = findClassLoader();
 
-            // try to load from ExtensionLoader's ClassLoader first
-            if (extensionLoaderClassLoaderFirst) {
-                ClassLoader extensionLoaderClassLoader = ExtensionLoader.class.getClassLoader();
-                if (ClassLoader.getSystemClassLoader() != extensionLoaderClassLoader) {
-                    urls = extensionLoaderClassLoader.getResources(fileName);
-                }
-            }
-
-            if (urls == null || !urls.hasMoreElements()) {
-                if (classLoader != null) {
-                    urls = classLoader.getResources(fileName);
-                } else {
-                    urls = ClassLoader.getSystemResources(fileName);
-                }
+            if (classLoader != null) {
+                urls = classLoader.getResources(fileName);
+            } else {
+                urls = ClassLoader.getSystemResources(fileName);
             }
 
             if (urls != null) {
                 while (urls.hasMoreElements()) {
                     java.net.URL resourceURL = urls.nextElement();
-                    loadResource(extensionClasses, classLoader, resourceURL, overridden, excludedPackages);
+                    loadResource(extensionClasses, classLoader, resourceURL);
                 }
             }
         } catch (Throwable t) {
@@ -221,8 +207,7 @@ public class ExtensionLoader<T> {
         }
     }
 
-    private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader,
-                              java.net.URL resourceURL, boolean overridden, String... excludedPackages) {
+    private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader, java.net.URL resourceURL) {
         try {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceURL.openStream(), StandardCharsets.UTF_8))) {
                 String line;
@@ -240,8 +225,8 @@ public class ExtensionLoader<T> {
                                 name = line.substring(0, i).trim();
                                 line = line.substring(i + 1).trim();
                             }
-                            if (line.length() > 0 && !isExcluded(line, excludedPackages)) {
-                                loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name, overridden);
+                            if (line.length() > 0) {
+                                loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name);
                             }
                         } catch (Throwable t) {
                             IllegalStateException e = new IllegalStateException("Failed to load extension class (interface: " + type + ", class line: " + line + ") in " + resourceURL + ", cause: " + t.getMessage(), t);
@@ -268,17 +253,14 @@ public class ExtensionLoader<T> {
         return false;
     }
 
-
-
-    private void loadClass(Map<String, Class<?>> extensionClasses, java.net.URL resourceURL, Class<?> clazz, String name,
-                           boolean overridden) throws NoSuchMethodException {
+    private void loadClass(Map<String, Class<?>> extensionClasses, java.net.URL resourceURL, Class<?> clazz, String name) throws NoSuchMethodException {
         if (!type.isAssignableFrom(clazz)) {
             throw new IllegalStateException("Error occurred when loading extension class (interface: " +
                     type + ", class line: " + clazz.getName() + "), class "
                     + clazz.getName() + " is not subtype of interface.");
         }
         if (clazz.isAnnotationPresent(Adaptive.class)) {
-            cacheAdaptiveClass(clazz, overridden);
+            cacheAdaptiveClass(clazz, false);
         } else if (isWrapperClass(clazz)) {
             cacheWrapperClass(clazz);
         } else {
@@ -286,7 +268,7 @@ public class ExtensionLoader<T> {
             if (StringUtils.isBlank(name)) {
                 throw new IllegalArgumentException("name 不能为空");
             }
-            saveInExtensionClass(extensionClasses, clazz, name, overridden);
+            saveInExtensionClass(extensionClasses, clazz, name, false);
         }
     }
 

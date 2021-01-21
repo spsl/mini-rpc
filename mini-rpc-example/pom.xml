@@ -11,5 +11,13 @@
 
     <artifactId>mini-rpc-example</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.spsl.mini-rpc</groupId>
+            <artifactId>mini-rpc-core</artifactId>
+        </dependency>
+
+    </dependencies>
+
 
 </project>
