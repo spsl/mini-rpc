@@ -1,5 +1,7 @@
 package com.github.spsl.minirpc.extension;
 
+import com.github.spsl.minirpc.annotations.SPI;
+
 public class DefaultExtensionFactory implements ExtensionFactory {
 
     @Override

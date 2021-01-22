@@ -1,8 +1,9 @@
-package com.github.spsl.minirpc.bytecode;
+package com.github.spsl.minirpc.bytecode.javassist;
 
+import com.github.spsl.minirpc.bytecode.Compiler;
 import com.github.spsl.minirpc.bytecode.support.ClassUtils;
 import com.github.spsl.minirpc.bytecode.support.CtClassBuilder;
-import com.github.spsl.minirpc.extension.Adaptive;
+import com.github.spsl.minirpc.annotations.Adaptive;
 import javassist.CtClass;
 
 import java.util.Arrays;
@@ -10,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Adaptive
-public class JavassistCompiler implements Compiler{
+public class JavassistCompiler implements Compiler {
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile("package\\s+([$_a-zA-Z][$_a-zA-Z0-9\\.]*);");
 

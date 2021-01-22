@@ -1,0 +1,2 @@
+adaptive=com.github.spsl.minirpc.bytecode.javassist.JavassistProxyFactory
+javassist=com.github.spsl.minirpc.bytecode.javassist.JavassistProxyFactory

@@ -1,5 +1,7 @@
 package com.github.spsl.minirpc.extension;
 
+import com.github.spsl.minirpc.annotations.Adaptive;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

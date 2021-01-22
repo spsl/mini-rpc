@@ -1,8 +1,10 @@
 package com.github.spsl.minirpc.extension;
 
 import com.alipay.remoting.util.ConcurrentHashSet;
+import com.github.spsl.minirpc.annotations.Adaptive;
+import com.github.spsl.minirpc.annotations.SPI;
 import com.github.spsl.minirpc.bytecode.Compiler;
-import com.github.spsl.minirpc.bytecode.JavassistCompiler;
+import com.github.spsl.minirpc.bytecode.javassist.JavassistCompiler;
 import com.github.spsl.minirpc.exceptions.RpcException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -136,7 +138,11 @@ public class ExtensionLoader<T> {
 
     private T createAdaptiveExtension() {
         try {
-            return injectExtension((T)getAdaptiveExtensionClass().newInstance());
+            Class<?> adaptiveExtensionClass = getAdaptiveExtensionClass();
+            if (adaptiveExtensionClass == null) {
+                return null;
+            }
+            return injectExtension((T) adaptiveExtensionClass.newInstance());
         } catch (Exception e) {
             logger.error("", e);
             throw new RpcException(e.getMessage());

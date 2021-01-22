@@ -1,7 +1,7 @@
 package com.github.spsl.minirpc.bytecode;
 
 
-import com.github.spsl.minirpc.extension.SPI;
+import com.github.spsl.minirpc.annotations.SPI;
 
 @SPI
 public interface Compiler {
