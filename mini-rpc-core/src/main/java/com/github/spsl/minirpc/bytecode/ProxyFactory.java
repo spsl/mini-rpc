@@ -14,5 +14,5 @@ public interface ProxyFactory {
 
     <T> T getProxy(Class<?> type, Invoker<T> invoker) throws RpcException;
 
-    <T> Invoker<T> getInvoker(T proxy, Class<T> type, URL url) throws RpcException;
+    <T> Invoker<T> getInvoker(Class<T> type, T proxy) throws RpcException;
 }

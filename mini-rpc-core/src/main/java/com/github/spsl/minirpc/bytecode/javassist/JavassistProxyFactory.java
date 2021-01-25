@@ -58,6 +58,11 @@ public class JavassistProxyFactory implements ProxyFactory {
         return getProxy(Collections.singletonList(type), invoker);
     }
 
+    @Override
+    public <T> Invoker<T> getInvoker(Class<T> type, T proxy) throws RpcException {
+        return null;
+    }
+
     private JavassistProxy createProxy(List<Class<?>> interfaceClasses) {
         return new JavassistProxy(interfaceClasses);
     }
@@ -66,8 +71,4 @@ public class JavassistProxyFactory implements ProxyFactory {
         return interfaceClasses.stream().map(Class::getName).collect(Collectors.joining(","));
     }
 
-    @Override
-    public <T> Invoker<T> getInvoker(T proxy, Class<T> type, URL url) throws RpcException {
-        return null;
-    }
 }
